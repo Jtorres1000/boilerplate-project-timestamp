@@ -24,6 +24,30 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+app.get("/api/:date", (req, res)=> {
+  date = req.params.date
+  
+  unix = /^\d+$/.test(date) ? true : false
+
+  if (unix) {
+    const timestamp = Number(date); // Convertir la cadena a número
+    const fecha = new Date(timestamp); // Convertir segundos a milisegundos
+  
+    return res.json({
+      unix: timestamp,
+      utc: fecha.toUTCString()
+    });
+  }
+
+  fecha = new Date(date)
+  res.json(
+    {
+      unix: `${fecha.getTime()}`,
+      utc: `${fecha.toUTCString()}`
+      //"utc":"Fri, 25 Dec 2015 00:00:00 GMT"}
+})
+})
+
 
 
 // Listen on port set in environment variable or default to 3000
