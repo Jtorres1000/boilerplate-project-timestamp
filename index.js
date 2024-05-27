@@ -25,30 +25,49 @@ app.get("/api/hello", function (req, res) {
 });
 
 app.get("/api/:date", (req, res) => {
-  date = req.params.date
 
-  unix = /^\d+$/.test(date) ? true : false
+  dateInput = req.params.date
+
+  console.log(`params: ${dateInput}`)
+
+  unix = /^\d+$/.test(dateInput) ? true : false
 
   if (unix) {
-    const timestamp = Number(date); // Convertir la cadena a número
-    const fecha = new Date(timestamp); // Convertir segundos a milisegundos
-
+    const timestamp = Number(dateInput); // Convertir la cadena a número // Convertir segundos a milisegundos
+    console.log(`unix: ${timestamp}`)
+    console.log(`utc: ${new Date(timestamp).toUTCString()}`)
     return res.json({
       unix: timestamp,
-      utc: fecha.toUTCString()
+      utc: new Date(timestamp).toUTCString()
     });
   }
 
-  fecha = new Date(date)
+  if (new Date(dateInput).toUTCString() === "Invalid Date") {
+    return res.json({
+      error: "Invalid Date"
+    })
+  }
+
+  console.log(`unix: ${new Date(dateInput).getTime()}`)
+  console.log(`utc: ${new Date(dateInput).toDateString()}`)
+
   res.json(
     {
-      unix: `${fecha.getTime()}`,
-      utc: `${fecha.toUTCString()}`
-
+      unix: Number(new Date(dateInput).valueOf()),
+      utc: new Date(dateInput).toUTCString()
+      //"utc":"Fri, 25 Dec 2015 00:00:00 GMT"}
     })
 })
 
-
+app.get('/api', (req, res) => {
+  console.log(req.query)
+  console.log(`unix:${new Date().getTime()}`)
+  console.log(`utc${new Date().toUTCString()}`)
+  res.json({
+    unix: new Date().valueOf(),
+    utc: new Date().toUTCString()
+  })
+})
 
 // Listen on port set in environment variable or default to 3000
 var listener = app.listen(process.env.PORT || 3000, function () {
